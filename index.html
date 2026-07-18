@@ -55,6 +55,58 @@
   </script>
 
   <style>
+    /* ── Performance: Force GPU rendering for 60-120Hz smoothness ── */
+    *, *::before, *::after {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* GPU hints for animated sections — composited layers only for elements that animate */
+    .step-item,
+    .card-3d,
+    .card-fade-in,
+    .cloud-item,
+    .admin-btn,
+    .tech-badge,
+    .term-outer,
+    .term-line,
+    .hero-subtitle,
+    .action-btn {
+      will-change: transform, opacity;
+    }
+    .system-material {
+      will-change: backdrop-filter;
+    }
+    .term-cmd {
+      will-change: max-width, border-color;
+    }
+
+    /* High refresh rate (90Hz-120Hz) — shorter durations for smoother feel */
+    @media (prefers-reduced-motion: no-preference) {
+      .step-item { animation-duration: 0.5s; }
+      .step-item:nth-child(1) .step-dot,
+      .step-item:nth-child(1) .step-connector,
+      .step-item:nth-child(1) .step-label,
+      .step-item:nth-child(2) .step-dot,
+      .step-item:nth-child(2) .step-connector,
+      .step-item:nth-child(2) .step-label,
+      .step-item:nth-child(3) .step-dot { animation-duration: 5s; }
+      .card-fade-in { animation-duration: 0.45s; }
+      .admin-btn { animation-duration: 0.35s; }
+      .cloud-item { animation-duration: 0.35s; }
+      .tech-badge { animation-duration: 0.35s; }
+    }
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -455,7 +507,7 @@
         <i class="ph ph-cpu text-apple-blue dark:text-apple-darkBlue text-lg"></i> Fitur
       </a>
       <a href="#architecture" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
-        <i class="ph ph-sitemap text-apple-purple dark:text-apple-darkPurple text-lg"></i> Arsitektur
+        <i class="ph ph-squares-four text-apple-purple dark:text-apple-darkPurple text-lg"></i> Arsitektur
       </a>
       <a href="#admin" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
         <i class="ph ph-shield-chevron text-apple-green dark:text-apple-darkGreen text-lg"></i> Admin
@@ -464,6 +516,12 @@
         <i class="ph ph-currency-circle-dollar text-apple-orange dark:text-apple-darkOrange text-lg"></i> Harga
       </a>
       <hr class="my-3 border-[#E5E5EA] dark:border-[#2C2C2E]" />
+      <button onclick="toggleSheet(); toggleTheme();" class="flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs font-bold hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all text-[#1C1C1E] dark:text-[#F2F2F7]">
+        <i class="ph ph-sun-dim hidden dark:block text-sm"></i>
+        <i class="ph ph-moon-stars block dark:hidden text-sm"></i>
+        <span class="dark:hidden">Mode Gelap</span>
+        <span class="hidden dark:inline">Mode Terang</span>
+      </button>
       <a href="https://t.me/dikaacode" target="_blank" class="flex items-center justify-center gap-2 bg-[#1C1C1E] dark:bg-white text-white dark:text-[#1C1C1E] py-3.5 rounded-xl text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all">
         <i class="ph ph-telegram-logo text-sm"></i> Hubungi Developer
       </a>
@@ -903,14 +961,14 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap justify-center gap-5">
-        <a href="https://t.me/execuidorbaru" target="_blank" class="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:bg-black/5 dark:hover:bg-white/10 hover:text-[#1C1C1E] dark:hover:text-white transition-all">
+      <div class="flex flex-wrap justify-center gap-6">
+        <a href="https://t.me/execuidorbaru" target="_blank" class="group flex items-center gap-1.5 text-[12px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:text-[#1C1C1E] dark:hover:text-white transition-all">
           <i class="ph ph-bell ph-fill group-hover:animate-wiggle text-sm"></i> Saluran Berita
         </a>
-        <a href="https://t.me/dikaacode" target="_blank" class="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:bg-black/5 dark:hover:bg-white/10 hover:text-[#1C1C1E] dark:hover:text-white transition-all">
+        <a href="https://t.me/dikaacode" target="_blank" class="group flex items-center gap-1.5 text-[12px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:text-[#1C1C1E] dark:hover:text-white transition-all">
           <i class="ph ph-bug-beetle ph-fill group-hover:animate-wiggle text-sm"></i> Laporkan Bug
         </a>
-        <a href="https://github.com/dikacode0-glitch/dikacode0-glitch.github.io/blob/main/HOWTOINSTALL.md" class="group flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:bg-black/5 dark:hover:bg-white/10 hover:text-[#1C1C1E] dark:hover:text-white transition-all">
+        <a href="https://github.com/dikacode0-glitch/dikacode0-glitch.github.io/blob/main/HOWTOINSTALL.md" class="group flex items-center gap-1.5 text-[12px] font-medium text-apple-lightGray dark:text-apple-darkGray hover:text-[#1C1C1E] dark:hover:text-white transition-all">
           <i class="ph ph-book-open ph-fill group-hover:animate-wiggle text-sm"></i> Panduan Instalasi
         </a>
       </div>
