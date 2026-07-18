@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Recovery Bot</title>
+  <meta name="description" content="Telegram Bot untuk Recovery & Verifikasi Akun WhatsApp — kirim appeal massal, fix code OTP, cek nomor WA, dan kelola akun langsung dari Telegram." />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #d29922;
+      --red: #f85149;
+      --purple: #bc8cff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+    .header img {
+      width: 120px;
+      height: 120px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p {
+      color: var(--text-muted);
+      font-size: 1.1em;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+    .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+    .badge.node { background: #339933; color: #fff; }
+    .badge.wa { background: #25D366; color: #fff; }
+    .badge.telegram { background: #2CA5E0; color: #fff; }
+    .badge.supabase { background: #3ECF8E; color: #000; }
+    .badge.mongo { background: #47A248; color: #fff; }
+    .badge.email { background: #EA4335; color: #fff; }
+    .badge.payment { background: #FF5722; color: #fff; }
+    .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95em;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .btn-primary { background: linear-gradient(135deg, #FF5733, #FF8C42); color: #fff; }
+    .btn-secondary { background: var(--surface); color: var(--accent); border: 1px solid var(--border); }
+
+    /* Content */
+    h2 {
+      font-size: 1.6em;
+      margin: 50px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 { font-size: 1.2em; margin: 30px 0 15px; color: var(--accent); }
+    p { margin-bottom: 16px; color: var(--text-muted); }
+    p strong { color: var(--text); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 0.95em;
+    }
+    th, td {
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    td { color: var(--text-muted); }
+    tr:hover td { background: rgba(88,166,255,0.05); }
+
+    /* Feature Cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .card h4 { color: var(--accent); margin-bottom: 8px; font-size: 1.05em; }
+    .card p { font-size: 0.9em; margin: 0; }
+    .card .emoji { font-size: 1.5em; margin-bottom: 8px; }
+
+    /* Lists */
+    ul, ol { margin: 12px 0 20px 24px; color: var(--text-muted); }
+    li { margin-bottom: 6px; }
+    li strong { color: var(--text); }
+
+    /* Code blocks */
+    code {
+      background: rgba(88,166,255,0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.88em;
+      color: var(--orange);
+    }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+    }
+    pre code {
+      background: none;
+      padding: 0;
+      color: var(--text);
+      font-size: 0.82em;
+      line-height: 1.6;
+    }
+
+    /* Pricing table */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .price-card .duration { font-size: 0.9em; color: var(--text-muted); }
+    .price-card .price { font-size: 1.5em; font-weight: 700; color: var(--green); margin: 8px 0; }
+
+    /* Divider */
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 0.9em;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+
+    /* Section divider */
+    .section-subtitle { color: var(--text-muted); font-size: 0.95em; margin-bottom: 20px; }
+
+    /* Command block */
+    .cmd {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0 24px;
+    }
+    .cmd-item { display: flex; gap: 8px; align-items: center; }
+    .cmd-item code { background: rgba(255,255,255,0.05); }
+
+    @media (max-width: 600px) {
+      .container { padding: 20px 16px; }
+      .header { padding: 40px 16px 30px; }
+      .header h1 { font-size: 1.6em; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      table { font-size: 0.85em; }
+      th, td { padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header">
+    <img src="https://files.catbox.moe/ecvmlf.jpg" alt="Logo" loading="lazy" />
+    <h1>🤖 WhatsApp Recovery Bot</h1>
+    <p>Telegram Bot untuk Recovery &amp; Verifikasi Akun WhatsApp — kirim appeal massal, fix code OTP, cek nomor WA, dan kelola akun langsung dari Telegram!</p>
+    <div class="badges">
+      <span class="badge node">Node.js 18+</span>
+      <span class="badge wa">WhatsApp Baileys</span>
+      <span class="badge telegram">Telegram Bot API</span>
+      <span class="badge email">SMTP Email</span>
+      <span class="badge payment">QRIS Payment</span>
+      <span class="badge supabase">Supabase</span>
+      <span class="badge mongo">MongoDB</span>
+    </div>
+    <div class="btn-group">
+      <a href="https://t.me/dikaacode" class="btn btn-primary" target="_blank" rel="noopener">💳 Beli Script Rp50.000</a>
+      <a href="https://t.me/dikaacode" class="btn btn-secondary" target="_blank" rel="noopener">📞 Kontak @DikaCode</a>
+    </div>
+  </div>
+
+  <!-- ═══ TABLE OF CONTENTS ═══ -->
+  <h2>📋 Daftar Isi</h2>
+  <ul>
+    <li><a href="#features" style="color:var(--accent);text-decoration:none;">✨ Features</a></li>
+    <li><a href="#pricing" style="color:var(--accent);text-decoration:none;">💰 Pricing</a></li>
+    <li><a href="#usage" style="color:var(--accent);text-decoration:none;">🚀 Usage</a></li>
+    <li><a href="#referral" style="color:var(--accent);text-decoration:none;">🎁 Referral Program</a></li>
+    <li><a href="#vip" style="color:var(--accent);text-decoration:none;">👑 VIP Premium</a></li>
+    <li><a href="#admin" style="color:var(--accent);text-decoration:none;">🛡️ Admin Panel</a></li>
+    <li><a href="#tech-stack" style="color:var(--accent);text-decoration:none;">🧱 Tech Stack</a></li>
+    <li><a href="#cloud-backup" style="color:var(--accent);text-decoration:none;">☁️ Cloud Backup</a></li>
+    <li><a href="#security" style="color:var(--accent);text-decoration:none;">🔒 Security</a></li>
+    <li><a href="#troubleshooting" style="color:var(--accent);text-decoration:none;">❓ Troubleshooting</a></li>
+  </ul>
+
+  <hr />
+
+  <!-- ═══ FEATURES ═══ -->
+  <h2 id="features">✨ Features</h2>
+
+  <h3>📧 Email Services</h3>
+  <table>
+    <tr><th>Fitur</th><th>Deskripsi</th></tr>
+    <tr><td><strong>Fix Login Unavailable</strong></td><td>Kirim email appeal ke 70+ alamat support WhatsApp untuk error "Login Unavailable"</td></tr>
+    <tr><td><strong>Fix Code 1 Jam</strong></td><td>Atasi error "Try Again in 1 Hour" — kirim laporan OTP tidak terkirim</td></tr>
+    <tr><td><strong>Request SMS Code</strong></td><td>Minta WhatsApp kirimkan SMS OTP (bukan Call) untuk verifikasi</td></tr>
+  </table>
+  <p>Setiap email dikirim dengan <strong>staggered delivery</strong> (delay &amp; concurrency), <strong>CC rotation</strong>, <strong>proxy rotator</strong>, dan <strong>10+ template berbeda</strong> agar terlihat natural &amp; tidak terdeteksi spam.</p>
+
+  <h3>📱 WhatsApp Checker</h3>
+  <table>
+    <tr><th>Fitur</th><th>Deskripsi</th></tr>
+    <tr><td><strong>Pair Device</strong></td><td>Hubungkan nomor WhatsApp via <strong>Pairing Code</strong> (bukan QR)</td></tr>
+    <tr><td><strong>Cek Nomor</strong></td><td>Periksa apakah nomor terdaftar di WhatsApp + lihat Bio</td></tr>
+    <tr><td><strong>Batch Check</strong></td><td>Upload file <code>.txt</code> — periksa ratusan nomor sekaligus</td></tr>
+  </table>
+
+  <h3>💝 Donasi Email Server</h3>
+  <p>User bisa mendonasikan akun Gmail mereka untuk jadi server pengirim tambahan. Diverifikasi otomatis (SMTP check) sebelum ditambahkan. Password dienkripsi AES-256-CBC.</p>
+
+  <h3>🎁 Referral Program</h3>
+  <ul>
+    <li>Dapatkan <strong>token gratis</strong> dengan mengajak teman</li>
+    <li>1 referral = +1 Appeal, +1 FixCode, +1 SMS token</li>
+    <li>Token = akses instan tanpa cooldown</li>
+    <li><strong>Share Link</strong> — bagikan referral langsung ke chat Telegram</li>
+  </ul>
+
+  <h3>👑 VIP Premium</h3>
+  <ul>
+    <li>Akses unlimited — kirim appeal &amp; fixcode tanpa batas</li>
+    <li>Tanpa cooldown &amp; tanpa token</li>
+    <li>Pembayaran via <strong>QRIS</strong> otomatis</li>
+    <li>Custom durasi (1–365 hari) + opsi <strong>Permanent</strong></li>
+  </ul>
+
+  <h3>🔐 Channel Verification</h3>
+  <p>User wajib join channel Telegram tertentu sebelum bisa menggunakan bot. Verifikasi otomatis melalui tombol <strong>VERIFY</strong>. Support <strong>dual channel</strong>.</p>
+
+  <hr />
+
+  <!-- ═══ PRICING ═══ -->
+  <h2 id="pricing">💰 Pricing</h2>
+  <table>
+    <tr><th>Item</th><th>Harga</th></tr>
+    <tr><td><strong>Script Full</strong> (free update seumur hidup)</td><td><strong>Rp50.000</strong></td></tr>
+    <tr><td><strong>VIP Premium</strong> (per hari)</td><td><strong>Rp1.000/hari</strong></td></tr>
+  </table>
+  <div class="btn-group" style="margin-top:12px;">
+    <a href="https://t.me/dikaacode" class="btn btn-primary" target="_blank" rel="noopener">💳 Beli Script</a>
+    <a href="https://t.me/dikaacode" class="btn btn-secondary" target="_blank" rel="noopener">📞 @DikaCode</a>
+  </div>
+
+  <hr />
+
+  <!-- ═══ USAGE ═══ -->
+  <h2 id="usage">🚀 Usage</h2>
+
+  <h3>User Commands</h3>
+  <table>
+    <tr><th>Command</th><th>Deskripsi</th></tr>
+    <tr><td><code>/start</code></td><td>Menu utama &amp; registrasi</td></tr>
+    <tr><td><code>/start ref_&lt;id&gt;</code></td><td>Join via referral link (otomatis)</td></tr>
+    <tr><td><code>/vip</code></td><td>Info &amp; pembelian VIP premium</td></tr>
+  </table>
+
+  <h3>Flow Appeal</h3>
+  <pre><code>User klik "📧 FIX LOGIN UNAVAILABLE"
+    ↓
+Cek membership channel (wajib join)
+    ↓
+Cek quota / referral token / cooldown / VIP
+    ↓
+Masukkan nomor HP (semua negara)
+    ↓
+Pilih server email (server 1, 2, atau custom donasi)
+    ↓
+✅ Email terkirim ke 70+ alamat support WhatsApp
+    ↓
+Cooldown 1 jam (free user) / VIP unlimited</code></pre>
+
+  <hr />
+
+  <!-- ═══ REFERRAL ═══ -->
+  <h2 id="referral">🎁 Referral Program</h2>
+  <p>Dapatkan <strong>token gratis</strong> dengan mengajak teman menggunakan link referral unikmu.</p>
+  <pre><code>🎁 PROGRAM REFERRAL
+
+📊 Saldo Token:
+  📧 Appeal: 2 token
+  ⏱ FixCode: 2 token
+  📨 SMS: 0 token
+
+🔗 Link Kamu:
+https://t.me/yourbot?start=ref_123456
+
+💡 Cara kerja:
+  1. Bagikan link ke teman
+  2. Teman klik link & JOIN semua channel
+  3. Teman tekan VERIFY
+  4. Kamu dapat +1 Appeal, FixCode & SMS</code></pre>
+
+  <hr />
+
+  <!-- ═══ VIP ═══ -->
+  <h2 id="vip">👑 VIP Premium</h2>
+  <p>Akses unlimited ke semua fitur dengan pembayaran QRIS.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="duration">1 Hari</div>
+      <div class="price">Rp1.000</div>
+      <div>✅ QRIS</div>
+    </div>
+    <div class="price-card">
+      <div class="duration">3 Hari</div>
+      <div class="price">Rp3.000</div>
+      <div>✅ QRIS</div>
+    </div>
+    <div class="price-card">
+      <div class="duration">7 Hari</div>
+      <div class="price">Rp7.000</div>
+      <div>✅ QRIS</div>
+    </div>
+    <div class="price-card">
+      <div class="duration">30 Hari</div>
+      <div class="price">Rp30.000</div>
+      <div>✅ QRIS</div>
+    </div>
+    <div class="price-card">
+      <div class="duration">Custom</div>
+      <div class="price">Rp1.000/hr</div>
+      <div>✅ QRIS</div>
+    </div>
+    <div class="price-card" style="border-color:var(--green);">
+      <div class="duration">Permanent</div>
+      <div class="price">Rp50.000</div>
+      <div>✅ QRIS</div>
+    </div>
+  </div>
+  <p>Pembayaran diproses otomatis — polling status QRIS tiap 5 detik dengan countdown. Setelah lunas, VIP langsung aktif.</p>
+
+  <hr />
+
+  <!-- ═══ ADMIN ═══ -->
+  <h2 id="admin">🛡️ Admin Panel</h2>
+  <p>Akses: <code>⚙️ ADMIN</code> (khusus owner/developer)</p>
+  <table>
+    <tr><th>Menu</th><th>Fungsi</th></tr>
+    <tr><td><strong>👑 ADD PREMIUM</strong></td><td>Beri akses premium ke user</td></tr>
+    <tr><td><strong>👑 REM PREMIUM</strong></td><td>Cabut akses premium</td></tr>
+    <tr><td><strong>📋 LIST PREMIUM</strong></td><td>Lihat semua user premium</td></tr>
+    <tr><td><strong>👥 ALL USERS</strong></td><td>Statistik &amp; daftar user</td></tr>
+    <tr><td><strong>📢 BROADCAST</strong></td><td>Kirim pesan ke semua user</td></tr>
+    <tr><td><strong>💝 ADD EMAIL</strong></td><td>Tambah server email donasi</td></tr>
+    <tr><td><strong>📋 LIST EMAIL</strong></td><td>Lihat server email aktif</td></tr>
+    <tr><td><strong>🗑 DELETE EMAIL</strong></td><td>Hapus server email</td></tr>
+    <tr><td><strong>📱 LIST DEVICE</strong></td><td>Lihat device WA terpair</td></tr>
+    <tr><td><strong>🗑 HAPUS DEVICE</strong></td><td>Hapus device WA</td></tr>
+    <tr><td><strong>👑 ADD/REMOVE OWNER</strong></td><td>Kelola owner (dev-only)</td></tr>
+  </table>
+
+  <p>Admin dashboard:</p>
+  <pre><code>╔ ⭐ Developer Panel
+║ 👥 Users: 150
+║ 👑 Premium: 5 (3 permanen, 2 terbatas)
+║ 📱 Devices: 2/3 online
+║ 💝 Donasi: 8 server
+║ 📧 Appeal terkirim: 342
+╚ ☁️ Cloud: Supabase ✅ | MongoDB ✅</code></pre>
+
+  <hr />
+
+  <!-- ═══ TECH STACK ═══ -->
+  <h2 id="tech-stack">🧱 Tech Stack</h2>
+  <table>
+    <tr><th>Technology</th><th>Purpose</th></tr>
+    <tr><td><strong>Node.js</strong></td><td>Runtime</td></tr>
+    <tr><td><strong>node-telegram-bot-api</strong></td><td>Telegram Bot API wrapper</td></tr>
+    <tr><td><strong>@whiskeysockets/baileys</strong></td><td>WhatsApp Multi-Device client</td></tr>
+    <tr><td><strong>nodemailer</strong></td><td>Email delivery via Gmail SMTP</td></tr>
+    <tr><td><strong>@supabase/supabase-js</strong></td><td>Cloud backup (PostgreSQL)</td></tr>
+    <tr><td><strong>mongodb</strong></td><td>Cloud backup (MongoDB Atlas)</td></tr>
+    <tr><td><strong>pino + pino-pretty</strong></td><td>Logging terstruktur &amp; rapi</td></tr>
+    <tr><td><strong>socks</strong></td><td>Proxy rotator (SOCKS5)</td></tr>
+  </table>
+
+  <h3>API Integration</h3>
+  <ul>
+    <li><strong>Telegram Bot API</strong> — polling-based message handling</li>
+    <li><strong>WhatsApp Web API</strong> — Baileys MD (Multi-Device) protocol</li>
+    <li><strong>Gmail SMTP</strong> — email delivery dengan staggered delay anti-spam</li>
+    <li><strong>Supabase REST API</strong> — cloud backup via service_role key</li>
+    <li><strong>MongoDB Atlas</strong> — cloud backup NoSQL via native driver</li>
+    <li><strong>Saweria API</strong> — QRIS payment gateway</li>
+  </ul>
+
+  <hr />
+
+  <!-- ═══ CLOUD BACKUP ═══ -->
+  <h2 id="cloud-backup">☁️ Cloud Backup (Supabase + MongoDB)</h2>
+  <p>Bot otomatis mem-backup semua data ke <strong>dua cloud database sekaligus</strong> setiap kali ada perubahan:</p>
+  <ol>
+    <li><strong>Supabase (PostgreSQL)</strong> — tabel relasional dengan migrasi SQL</li>
+    <li><strong>MongoDB Atlas</strong> — dokumen NoSQL, schemaless</li>
+  </ol>
+  <p><strong>Redundansi penuh</strong> — jika satu cloud down, data tetap aman di cloud lain + file JSON lokal.</p>
+
+  <h3>Fitur</h3>
+  <ul>
+    <li>✅ Fire-and-forget — tidak blokir response bot</li>
+    <li>✅ Setiap <code>save()</code> lokal → langsung sync ke kedua cloud secara paralel</li>
+    <li>✅ Full sync saat startup + periodic tiap 5 menit</li>
+    <li>✅ Non-blocking — bot tetap jalan walau salah satu atau kedua cloud error</li>
+    <li>✅ Encrypted password untuk email server (AES-256-CBC)</li>
+  </ul>
+
+  <h3>Supabase Tables</h3>
+  <table>
+    <tr><th>Table</th><th>Primary Key</th><th>Isi</th></tr>
+    <tr><td><code>users</code></td><td><code>id</code> (BIGINT)</td><td>Data user Telegram</td></tr>
+    <tr><td><code>owners</code></td><td><code>id</code> (BIGINT)</td><td>Bot admin</td></tr>
+    <tr><td><code>premium</code></td><td><code>id</code> (BIGINT)</td><td>VIP members</td></tr>
+    <tr><td><code>referrals</code></td><td><code>user_id</code> (BIGINT)</td><td>Token balances</td></tr>
+    <tr><td><code>devices</code></td><td><code>chat_id</code> (BIGINT)</td><td>WA sessions</td></tr>
+    <tr><td><code>donated_servers</code></td><td><code>id</code> (TEXT)</td><td>Email servers (encrypted)</td></tr>
+    <tr><td><code>sent_emails</code></td><td><code>id</code> (TEXT)</td><td>Email history</td></tr>
+    <tr><td><code>purchases</code></td><td><code>id</code> (TEXT)</td><td>Purchase history</td></tr>
+  </table>
+
+  <h3>MongoDB Collections</h3>
+  <p>Collection sama persis struktur dengan tabel Supabase di atas — bedanya NoSQL (document). Migration nol konfigurasi.</p>
+
+  <hr />
+
+  <!-- ═══ SECURITY ═══ -->
+  <h2 id="security">🔒 Security</h2>
+  <ul>
+    <li><strong>App Passwords</strong> — tidak pernah menyimpan password Gmail asli, hanya App Password 16 karakter</li>
+    <li><strong>Encryption</strong> — password email server dienkripsi AES-256-CBC sebelum disimpan</li>
+    <li><strong>Channel Gate</strong> — user wajib join channel sebelum akses bot</li>
+    <li><strong>Rate Limiting</strong> — sliding window (3 request/menit) + cooldown 1 jam (free user)</li>
+    <li><strong>Quota</strong> — 3x kirim per 5 jam (free user), unlimited untuk VIP</li>
+    <li><strong>Privacy</strong> — nomor HP &amp; email user tidak disimpan permanen di chat</li>
+    <li><strong>3-Layer Redundancy</strong> — JSON lokal + Supabase + MongoDB</li>
+  </ul>
+
+  <hr />
+
+  <!-- ═══ TROUBLESHOOTING ═══ -->
+  <h2 id="troubleshooting">❓ Troubleshooting</h2>
+  <table>
+    <tr><th>Problem</th><th>Solution</th></tr>
+    <tr><td>Bot tidak merespon</td><td>Pastikan <code>BOT_TOKEN</code> benar, restart bot</td></tr>
+    <tr><td>Pairing WA gagal</td><td>Coba ulang, pastikan nomor benar (kode negara + 628xx)</td></tr>
+    <tr><td>Email tidak terkirim</td><td>Cek App Password, coba custom email donor</td></tr>
+    <tr><td>Proxy error</td><td>Set <code>PROXY_ENABLED=false</code> di .env, restart</td></tr>
+    <tr><td>409 Conflict Telegram</td><td>Bunuh semua proses node, start ulang (hanya satu instans)</td></tr>
+    <tr><td>Cloud sync error</td><td>Cek koneksi internet &amp; Supabase/MongoDB credentials</td></tr>
+    <tr><td>"Login Unavailable"</td><td>Itu yang mau di-fix — kirim appeal!</td></tr>
+  </table>
+
+  <hr />
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer">
+    <p>Made with ❤️ for the WhatsApp recovery community</p>
+    <p>
+      <a href="https://t.me/execuidorbaru">📢 Channel</a>
+      &nbsp;·&nbsp;
+      <a href="https://t.me/dikaacode">🐛 Report Bug</a>
+      &nbsp;·&nbsp;
+      <a href="https://t.me/dikaacode">✨ Request Feature</a>
+      &nbsp;·&nbsp;
+      <a href="HOWTOINSTALL.md">📖 Cara Install</a>
+    </p>
+    <p style="margin-top:12px; font-size:0.85em; color:var(--border);">
+      WhatsApp Recovery Bot — © 2024-2026 DikaCode
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
