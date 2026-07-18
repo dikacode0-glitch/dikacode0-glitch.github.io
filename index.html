@@ -375,6 +375,26 @@
       html.classList.toggle('dark');
       localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
     }
+    function toggleSheet() {
+      const overlay = document.getElementById('sheetOverlay');
+      const sheet = document.getElementById('bottomSheet');
+      const openIcon = document.getElementById('menuOpenIcon');
+      const closeIcon = document.getElementById('menuCloseIcon');
+      const isOpen = !sheet.classList.contains('translate-y-full');
+      if (isOpen) {
+        sheet.classList.add('translate-y-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100', 'pointer-events-auto');
+        openIcon.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+      } else {
+        sheet.classList.remove('translate-y-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100', 'pointer-events-auto');
+        openIcon.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+      }
+    }
   </script>
 </head>
 
@@ -393,7 +413,7 @@
         <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-apple-blue/10 to-apple-purple/10 dark:from-apple-darkBlue/10 dark:to-apple-darkPurple/10 flex items-center justify-center">
           <i class="ph ph-shield-check text-apple-blue dark:text-apple-darkBlue text-base"></i>
         </div>
-        <span class="font-bold tracking-tight">RecoveryBot</span>
+        <span class="font-bold tracking-tight">DikaBot</span>
       </a>
 
       <div class="hidden md:flex items-center gap-1 text-[13px] font-medium">
@@ -403,7 +423,13 @@
         <a href="#pricing" class="px-3.5 py-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-apple-lightGray dark:text-apple-darkGray hover:text-[#1C1C1E] dark:hover:text-white transition-all">Harga</a>
       </div>
 
-      <div class="flex items-center gap-2">
+      <!-- Sidebar toggle button (mobile) -->
+      <button onclick="toggleSheet()" class="md:hidden w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-apple-lightGray dark:text-apple-darkGray">
+        <i id="menuOpenIcon" class="ph ph-list text-sm"></i>
+        <i id="menuCloseIcon" class="ph ph-x text-sm hidden"></i>
+      </button>
+
+      <div class="hidden md:flex items-center gap-2">
         <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center hover:scale-110 active:scale-95 transition-all text-apple-lightGray dark:text-apple-darkGray hover:text-[#1C1C1E] dark:hover:text-white">
           <i class="ph ph-sun-dim hidden dark:block text-sm"></i>
           <i class="ph ph-moon-stars block dark:hidden text-sm"></i>
@@ -414,6 +440,35 @@
       </div>
     </div>
   </nav>
+
+  <!-- Bottom Sheet Overlay (mobile) -->
+  <div id="sheetOverlay" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 md:hidden" onclick="toggleSheet()"></div>
+
+  <!-- Bottom Sheet Panel (mobile) -->
+  <div id="bottomSheet" class="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#1C1C1E] rounded-t-3xl shadow-2xl shadow-black/20 translate-y-full transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:hidden">
+    <!-- Sheet handle -->
+    <div class="flex justify-center pt-3 pb-1">
+      <div class="w-10 h-1 rounded-full bg-[#E5E5EA] dark:bg-[#2C2C2E]"></div>
+    </div>
+    <div class="px-6 pb-8 pt-2 flex flex-col gap-1">
+      <a href="#features" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
+        <i class="ph ph-cpu text-apple-blue dark:text-apple-darkBlue text-lg"></i> Fitur
+      </a>
+      <a href="#architecture" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
+        <i class="ph ph-sitemap text-apple-purple dark:text-apple-darkPurple text-lg"></i> Arsitektur
+      </a>
+      <a href="#admin" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
+        <i class="ph ph-shield-chevron text-apple-green dark:text-apple-darkGreen text-lg"></i> Admin
+      </a>
+      <a href="#pricing" onclick="toggleSheet()" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium text-[#1C1C1E] dark:text-[#F2F2F7] hover:bg-black/5 dark:hover:bg-white/10 active:scale-[0.98] transition-all">
+        <i class="ph ph-currency-circle-dollar text-apple-orange dark:text-apple-darkOrange text-lg"></i> Harga
+      </a>
+      <hr class="my-3 border-[#E5E5EA] dark:border-[#2C2C2E]" />
+      <a href="https://t.me/dikaacode" target="_blank" class="flex items-center justify-center gap-2 bg-[#1C1C1E] dark:bg-white text-white dark:text-[#1C1C1E] py-3.5 rounded-xl text-xs font-bold hover:opacity-90 active:scale-[0.98] transition-all">
+        <i class="ph ph-telegram-logo text-sm"></i> Hubungi Developer
+      </a>
+    </div>
+  </div>
 
   <main class="relative z-10 pt-28 pb-24 px-6 max-w-5xl mx-auto flex flex-col gap-28 md:gap-36">
 
@@ -479,7 +534,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="card-3d card-fade-in system-material p-6 squircle-lg">
             <div class="card-icon w-10 h-10 bg-apple-blue/10 dark:bg-apple-darkBlue/10 rounded-xl flex items-center justify-center mb-5 text-apple-blue dark:text-apple-darkBlue">
-              <i class="ph ph-lock-keyhole text-lg"></i>
+              <i class="ph ph-lock-open text-lg"></i>
             </div>
             <h4 class="text-sm font-bold mb-2">Penanganan Pembatasan Login</h4>
             <p class="text-xs text-apple-lightGray dark:text-apple-darkGray leading-relaxed">Mendistribusikan laporan verifikasi terstruktur ke berbagai endpoint kontak bantuan resmi guna memulihkan status login.</p>
@@ -791,7 +846,7 @@
 
         <!-- VIP -->
         <div class="card-3d system-material p-8 squircle-lg relative flex flex-col justify-between border-apple-blue dark:border-apple-darkBlue shadow-[0_8px_32px_rgba(0,122,255,0.06)]">
-          <div class="absolute top-0 right-0 bg-apple-blue dark:bg-apple-darkBlue text-white text-[9px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider flex items-center gap-1.5">
+          <div class="absolute top-3 right-3 bg-apple-blue dark:bg-apple-darkBlue text-white text-[8px] sm:text-[9px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider flex items-center gap-1.5 shadow-sm shadow-apple-blue/30">
             <i class="ph ph-credit-card text-xs"></i> Otomatisasi QRIS
           </div>
 
