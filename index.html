@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Recovery Bot | Enterprise Solution</title>
+  <meta name="description" content="Telegram Bot untuk Recovery & Verifikasi Akun WhatsApp — kirim appeal massal, fix code OTP, cek nomor WA, dan kelola akun langsung dari Telegram." />
+  
+  <!-- Fonts: Inter for Apple-like clean UI typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Tailwind Configuration for Exact Apple System Guidelines -->
+  <script>
+    tailwind.config = {
+      darkMode: 'media', // Automatic transition based on iOS system preferences
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'monospace'],
+          },
+          colors: {
+            apple: {
+              // Light System Colors
+              lightBg: '#F2F2F7', 
+              lightGrouped: '#FFFFFF',
+              lightGray: '#8E8E93',
+              // Dark System Colors
+              darkBg: '#000000',
+              darkGrouped: '#1C1C1E',
+              darkGroupedSecondary: '#2C2C2E',
+              darkGray: '#8E8E93',
+              // Dynamic Accents (iOS Palette)
+              blue: '#007AFF',
+              darkBlue: '#0A84FF',
+              purple: '#AF52DE',
+              darkPurple: '#BF5AF2',
+              green: '#34C759',
+              darkGreen: '#30D158',
+              orange: '#FF9500',
+              darkOrange: '#FF9F0A',
+              red: '#FF3B30',
+              darkRed: '#FF453A',
+              teal: '#5856D6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Custom Scrollbar tailored for macOS style */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 99px; }
+    @media (prefers-color-scheme: dark) {
+      ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); }
+    }
+
+    /* iOS Squircle Corner Radius simulation (Smooth Cornering) */
+    .squircle-lg {
+      border-radius: 22px;
+    }
+    .squircle-xl {
+      border-radius: 28px;
+    }
+
+    /* System Materials (Glassmorphism) */
+    .system-material {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    @media (prefers-color-scheme: dark) {
+      .system-material {
+        background: rgba(28, 28, 30, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+    }
+
+    /* Subtle hover transformations echoing Apple TV/iOS hover depth */
+    .ios-card {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ios-card:hover {
+      transform: scale(1.015);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+    }
+    @media (prefers-color-scheme: dark) {
+      .ios-card:hover {
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    /* Dynamic iOS Accent Gradients */
+    .accent-gradient {
+      background: linear-gradient(135deg, #007AFF 0%, #AF52DE 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @media (prefers-color-scheme: dark) {
+      .accent-gradient {
+        background: linear-gradient(135deg, #0A84FF 0%, #BF5AF2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+  </style>
+</head>
+
+<body class="antialiased bg-[#F2F2F7] dark:bg-black text-[#1C1C1E] dark:text-[#F2F2F7] transition-colors duration-300 relative selection:bg-apple-blue selection:text-white overflow-x-hidden">
+
+  <!-- Ambient Light Effects (Subtle Background Glows) -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[700px] pointer-events-none overflow-hidden opacity-30 dark:opacity-15 z-0">
+    <div class="absolute top-[-30%] left-[5%] w-[600px] h-[600px] rounded-full bg-apple-blue blur-[150px]"></div>
+    <div class="absolute top-[-20%] right-[5%] w-[550px] h-[550px] rounded-full bg-apple-purple blur-[150px]"></div>
+  </div>
+
+  <!-- iOS-Style Translucent Navigation Bar -->
+  <nav class="fixed top-0 w-full z-50 bg-white/75 dark:bg-black/75 backdrop-blur-2xl border-b border-[#E5E5EA] dark:border-[#2C2C2E] transition-colors duration-300">
+    <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2.5 font-semibold text-base tracking-tight active:scale-98 transition-transform">
+        <div class="w-8 h-8 rounded-lg bg-apple-blue/10 dark:bg-apple-darkBlue/10 flex items-center justify-center">
+          <i class="ph ph-robot text-apple-blue dark:text-apple-darkBlue text-lg"></i>
+        </div>
+        <span class="font-bold tracking-tight">RecoveryBot</span>
+      </a>
+      
+      <div class="hidden md:flex items-center gap-7 text-[13px] font-medium text-apple-lightGray dark:text-apple-darkGray">
+        <a href="#features" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors">Fitur</a>
+        <a href="#architecture" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors">Arsitektur</a>
+        <a href="#admin" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors">Admin</a>
+        <a href="#pricing" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors">Harga</a>
+      </div>
+
+      <a href="https://t.me/dikaacode" target="_blank" class="bg-[#1C1C1E] dark:bg-[#FFFFFF] text-white dark:text-[#1C1C1E] px-4 py-1.5 rounded-full text-xs font-semibold hover:opacity-90 active:scale-95 transition-all shadow-sm">
+        Hubungi Developer
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="relative z-10 pt-32 pb-24 px-6 max-w-5xl mx-auto flex flex-col gap-28 md:gap-36">
+    
+    <!-- Hero Section -->
+    <section class="flex flex-col items-center text-center">
+      <div class="mb-10 relative">
+        <!-- Squircle app icon container matching exactly Apple app store ratio -->
+        <div class="absolute -inset-2 bg-gradient-to-r from-apple-blue to-apple-purple dark:from-apple-darkBlue dark:to-apple-darkPurple rounded-[24%] blur-md opacity-20"></div>
+        <img src="https://files.catbox.moe/ecvmlf.jpg" alt="Recovery Bot App Icon" class="relative w-28 h-28 rounded-[22.5%] object-cover shadow-lg border border-white/30 dark:border-white/10" loading="lazy" />
+      </div>
+      
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tighter mb-6 leading-[1.08]">
+        Pemulihan Akun WhatsApp<br />
+        <span class="accent-gradient">Terotomatisasi & Aman</span>
+      </h1>
+      
+      <p class="text-sm md:text-base text-apple-lightGray dark:text-apple-darkGray max-w-xl mx-auto mb-10 leading-relaxed font-normal">
+        Otomasi terpadu untuk pemulihan akun melalui Telegram. Tangani kendala kode OTP, kirim laporan massal via server aman, serta evaluasi kualitas data secara terarah.
+      </p>
+      
+      <!-- iOS Badges -->
+      <div class="flex flex-wrap justify-center gap-2 mb-10 max-w-2xl">
+        <span class="system-material px-3.5 py-1.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 text-[#1C1C1E] dark:text-[#F2F2F7]">
+          <i class="ph ph-terminal-window text-apple-blue text-sm"></i> Node.js 18+
+        </span>
+        <span class="system-material px-3.5 py-1.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 text-[#1C1C1E] dark:text-[#F2F2F7]">
+          <i class="ph ph-whatsapp-logo text-apple-green text-sm"></i> Baileys MD
+        </span>
+        <span class="system-material px-3.5 py-1.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 text-[#1C1C1E] dark:text-[#F2F2F7]">
+          <i class="ph ph-paper-plane-tilt text-[#00AFEC] text-sm"></i> Telegram API
+        </span>
+        <span class="system-material px-3.5 py-1.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 text-[#1C1C1E] dark:text-[#F2F2F7]">
+          <i class="ph ph-paperclip text-apple-purple text-sm"></i> Multi-SMTP
+        </span>
+        <span class="system-material px-3.5 py-1.5 rounded-full text-[11px] font-medium flex items-center gap-1.5 text-[#1C1C1E] dark:text-[#F2F2F7]">
+          <i class="ph ph-database text-apple-orange text-sm"></i> Supabase / Mongo
+        </span>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
+        <a href="#pricing" class="bg-apple-blue dark:bg-apple-darkBlue text-white px-8 py-3.5 rounded-xl font-semibold text-[13px] flex items-center justify-center gap-2 active:scale-95 hover:opacity-95 transition-all shadow-md shadow-apple-blue/10">
+          <i class="ph ph-shopping-bag text-base"></i> Beli Script Sekarang
+        </a>
+        <a href="https://t.me/dikaacode" target="_blank" class="system-material px-8 py-3.5 rounded-xl font-semibold text-[13px] flex items-center justify-center gap-2 text-[#1C1C1E] dark:text-white active:scale-95 transition-all">
+          <i class="ph ph-chats text-base"></i> Hubungi Pengembang
+        </a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="scroll-mt-24">
+      <!-- Feature Set 1: Mailing -->
+      <div class="mb-16">
+        <div class="flex items-center gap-3.5 mb-8">
+          <div class="w-10 h-10 bg-apple-blue/10 dark:bg-apple-darkBlue/10 rounded-xl flex items-center justify-center shrink-0">
+            <i class="ph ph-envelope-simple text-apple-blue dark:text-apple-darkBlue text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold tracking-tight">Modul Pengiriman Laporan</h2>
+            <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Sistem transmisi bertahap dengan rotasi alamat pengirim serta penyamaran proxy.</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="system-material ios-card p-6 squircle-lg">
+            <div class="w-10 h-10 bg-apple-blue/10 dark:bg-apple-darkBlue/10 rounded-xl flex items-center justify-center mb-5 text-apple-blue dark:text-apple-darkBlue">
+              <i class="ph ph-lock-keyhole text-lg"></i>
+            </div>
+            <h4 class="text-sm font-bold mb-2">Penanganan Pembatasan Login</h4>
+            <p class="text-xs text-apple-lightGray dark:text-apple-darkGray leading-relaxed">Mendistribusikan laporan verifikasi terstruktur ke berbagai endpoint kontak bantuan resmi guna memulihkan status login.</p>
+          </div>
+          
+          <div class="system-material ios-card p-6 squircle-lg">
+            <div class="w-10 h-10 bg-apple-orange/10 dark:bg-apple-darkOrange/10 rounded-xl flex items-center justify-center mb-5 text-apple-orange dark:text-apple-darkOrange">
+              <i class="ph ph-clock-countdown text-lg"></i>
+            </div>
+            <h4 class="text-sm font-bold mb-2">Penyelesaian Penundaan OTP</h4>
+            <p class="text-xs text-apple-lightGray dark:text-apple-darkGray leading-relaxed">Membantu mempercepat pemulihan akun yang terkena pembatasan waktu tunggu OTP 1 jam dengan laporan berkala.</p>
+          </div>
+          
+          <div class="system-material ios-card p-6 squircle-lg">
+            <div class="w-10 h-10 bg-apple-green/10 dark:bg-apple-darkGreen/10 rounded-xl flex items-center justify-center mb-5 text-apple-green dark:text-apple-darkGreen">
+              <i class="ph ph-chat-text text-lg"></i>
+            </div>
+            <h4 class="text-sm font-bold mb-2">Prioritas Otentikasi SMS</h4>
+            <p class="text-xs text-apple-lightGray dark:text-apple-darkGray leading-relaxed">Menginstruksikan pusat verifikasi untuk mendahulukan pengiriman kode keamanan melalui pesan teks SMS.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Set 2: WA Utilities presented as clean iOS Grouped Lists -->
+      <div>
+        <div class="flex items-center gap-3.5 mb-8">
+          <div class="w-10 h-10 bg-apple-purple/10 dark:bg-apple-darkPurple/10 rounded-xl flex items-center justify-center shrink-0">
+            <i class="ph ph-squares-four text-apple-purple dark:text-apple-darkPurple text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold tracking-tight">Alat Integrasi & Utilitas Tambahan</h2>
+            <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Komponen fungsional tambahan untuk mengelola basis data perangkat.</p>
+          </div>
+        </div>
+        
+        <div class="system-material squircle-lg overflow-hidden divide-y divide-[#E5E5EA]/40 dark:divide-[#2C2C2E]/40">
+          <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-colors">
+            <div class="w-9 h-9 bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-lg flex items-center justify-center shrink-0">
+              <i class="ph ph-link-simple text-base text-[#1C1C1E] dark:text-[#F2F2F7]"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-xs font-bold">Sinkronisasi Tanpa Pemindaian QR</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Menghubungkan akun menggunakan otorisasi kode numerik 8-digit langsung dari backend.</p>
+            </div>
+          </div>
+
+          <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-colors">
+            <div class="w-9 h-9 bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-lg flex items-center justify-center shrink-0">
+              <i class="ph ph-microsoft-excel-logo text-base text-apple-green"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-xs font-bold">Evaluasi Basis Data Nomor Massal</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Memvalidasi status ribuan nomor ponsel sekaligus menggunakan format dokumen teks biasa.</p>
+            </div>
+          </div>
+
+          <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-colors">
+            <div class="w-9 h-9 bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-lg flex items-center justify-center shrink-0">
+              <i class="ph ph-share-network text-base text-apple-blue"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-xs font-bold">Sistem Afiliasi Kuota Referensi</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Menyediakan insentif kuota penggunaan otomatis kepada pengguna yang berkontribusi membawa pengguna baru.</p>
+            </div>
+          </div>
+
+          <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-colors">
+            <div class="w-9 h-9 bg-[#E5E5EA] dark:bg-[#2C2C2E] rounded-lg flex items-center justify-center shrink-0">
+              <i class="ph ph-lock text-base text-apple-red"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="text-xs font-bold">Integrasi Server SMTP Mandiri Enkriptif</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Mendukung input kredensial pengiriman dari pengguna dengan penyimpanan terenkripsi algoritma AES-256-CBC.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Execution Flow -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="flex items-center gap-3.5 mb-6">
+          <div class="w-10 h-10 bg-apple-green/10 dark:bg-apple-darkGreen/10 rounded-xl flex items-center justify-center shrink-0">
+            <i class="ph ph-git-merge text-apple-green dark:text-apple-darkGreen text-xl"></i>
+          </div>
+          <h2 class="text-lg font-bold tracking-tight">Prosedur Pemrosesan</h2>
+        </div>
+        <p class="text-xs text-apple-lightGray dark:text-apple-darkGray mb-8 leading-relaxed">
+          Setiap perintah yang masuk diklasifikasi melalui beberapa tahapan validasi sebelum diserahkan ke jaringan distribusi luar.
+        </p>
+        
+        <!-- Timeline Steps -->
+        <div class="space-y-6">
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-7 h-7 rounded-full bg-white dark:bg-apple-darkGrouped border border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-center text-[11px] font-bold z-10">1</div>
+              <div class="w-px h-full bg-[#E5E5EA] dark:bg-[#2C2C2E] my-2"></div>
+            </div>
+            <div class="pb-3">
+              <h4 class="text-xs font-bold text-[#1C1C1E] dark:text-white">Validasi Lisensi & Token</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-1 leading-relaxed">Sistem mengonfirmasi hak akses, ketersediaan batas kuota harian, serta masa aktif lisensi pemohon.</p>
+            </div>
+          </div>
+          
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-7 h-7 rounded-full bg-white dark:bg-apple-darkGrouped border border-[#E5E5EA] dark:border-[#2C2C2E] flex items-center justify-center text-[11px] font-bold z-10">2</div>
+              <div class="w-px h-full bg-[#E5E5EA] dark:bg-[#2C2C2E] my-2"></div>
+            </div>
+            <div class="pb-3">
+              <h4 class="text-xs font-bold text-[#1C1C1E] dark:text-white">Alokasi Infrastruktur Pengiriman</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-1 leading-relaxed">Perintah diarahkan menuju simpul server SMTP yang memiliki performa dan respon terbaik di jaringan internal.</p>
+            </div>
+          </div>
+          
+          <div class="flex gap-4">
+            <div class="flex flex-col items-center">
+              <div class="w-7 h-7 rounded-full bg-apple-blue dark:bg-apple-darkBlue flex items-center justify-center text-[11px] font-bold z-10 text-white">3</div>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-[#1C1C1E] dark:text-white">Pelaporan Tersebar</h4>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-1 leading-relaxed">Dokumen laporan dikirim secara bertahap demi meminimalkan resiko penolakan dari sistem penerima.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Console Window styled like macOS Xcode Terminal -->
+      <div class="bg-[#121214] rounded-xl overflow-hidden shadow-2xl border border-[#2C2C2E]/80">
+        <div class="bg-[#1A1A1E] px-4 py-3.5 flex items-center justify-between border-b border-[#2C2C2E]/50">
+          <div class="flex items-center gap-1.5">
+            <div class="w-3 h-3 rounded-full bg-apple-red"></div>
+            <div class="w-3 h-3 rounded-full bg-apple-orange"></div>
+            <div class="w-3 h-3 rounded-full bg-apple-green"></div>
+          </div>
+          <span class="text-[10px] font-mono text-apple-darkGray">bash - dispatch_service.js</span>
+          <div class="w-12"></div>
+        </div>
+        
+        <div class="p-6 font-mono text-[11px] leading-relaxed text-neutral-300 space-y-3.5">
+          <div><span class="text-apple-darkGray">developer@system-node:~$</span> node run</div>
+          
+          <div class="flex items-start gap-2 text-apple-darkGreen">
+            <i class="ph ph-check-circle text-base shrink-0 mt-0.5"></i>
+            <span>Sesi terotentikasi. Kredensial aktif ditemukan.</span>
+          </div>
+          
+          <div class="text-apple-darkGray border-l border-[#2C2C2E] pl-3 py-1 space-y-1">
+            <p>Metode yang terdeteksi:</p>
+            <p class="text-neutral-200">- Laporan Login Terkendala</p>
+            <p class="text-neutral-200">- Akselerasi Transmisi SMS</p>
+          </div>
+          
+          <div class="space-y-1 text-[10px]">
+            <p><span class="text-apple-darkBlue">target_phone:</span> +62812XXXXXX</p>
+            <p><span class="text-apple-darkBlue">status:</span> Menyiapkan berkas transmisi...</p>
+          </div>
+          
+          <div class="flex items-start gap-2 text-apple-darkGreen">
+            <i class="ph ph-check-circle text-base shrink-0 mt-0.5"></i>
+            <span>Pengiriman laporan berhasil didistribusikan ke 74 simpul bantuan.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cloud Backups & Admin Widgets -->
+    <section id="architecture" class="scroll-mt-24">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- Cloud Storage Block -->
+        <div class="system-material p-8 squircle-lg">
+          <div class="flex items-center gap-3.5 mb-6">
+            <div class="w-10 h-10 bg-slate-100 dark:bg-[#2C2C2E] rounded-xl flex items-center justify-center shrink-0">
+              <i class="ph ph-database text-[#1C1C1E] dark:text-[#F2F2F7] text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold tracking-tight">Ketersediaan Cadangan Data</h3>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Sistem penyimpanan redundant untuk menjaga kesinambungan operasional.</p>
+            </div>
+          </div>
+          
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <div class="mt-1 text-apple-blue dark:text-apple-darkBlue"><i class="ph ph-shield-check text-base"></i></div>
+              <div>
+                <strong class="block text-xs font-bold text-[#1C1C1E] dark:text-white">Penyimpanan Status Internal</strong>
+                <span class="text-[11px] text-apple-lightGray dark:text-apple-darkGray">Menggunakan pemetaan berkas internal guna memastikan waktu respon yang sangat singkat.</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-3">
+              <div class="mt-1 text-apple-green dark:text-apple-darkGreen"><i class="ph ph-check-square text-base"></i></div>
+              <div>
+                <strong class="block text-xs font-bold text-[#1C1C1E] dark:text-white">Infrastruktur Supabase (PostgreSQL)</strong>
+                <span class="text-[11px] text-apple-lightGray dark:text-apple-darkGray">Penyimpanan relasional tangguh untuk pencatatan transaksi serta log aktivitas sistem secara akurat.</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-3">
+              <div class="mt-1 text-apple-purple dark:text-apple-darkPurple"><i class="ph ph-checks text-base"></i></div>
+              <div>
+                <strong class="block text-xs font-bold text-[#1C1C1E] dark:text-white">Skema Dokumen MongoDB Atlas</strong>
+                <span class="text-[11px] text-apple-lightGray dark:text-apple-darkGray">Digunakan untuk menyimpan log status sesi koneksi yang bervariasi secara aman.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Admin Control Block -->
+        <div id="admin" class="system-material p-8 squircle-lg scroll-mt-24">
+          <div class="flex items-center gap-3.5 mb-6">
+            <div class="w-10 h-10 bg-slate-100 dark:bg-[#2C2C2E] rounded-xl flex items-center justify-center shrink-0">
+              <i class="ph ph-shield-chevron text-[#1C1C1E] dark:text-[#F2F2F7] text-xl"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold tracking-tight">Akses Khusus Administrator</h3>
+              <p class="text-[11px] text-apple-lightGray dark:text-apple-darkGray mt-0.5">Modul kendali penuh secara terpusat langsung menggunakan pesan instan Telegram.</p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white/40 dark:bg-[#1C1C1E]/40 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-all">
+              <span class="font-mono text-[10px] font-bold text-apple-blue dark:text-apple-darkBlue">TAMBAH PREMIUM</span>
+              <i class="ph ph-crown text-apple-lightGray text-sm"></i>
+            </div>
+            
+            <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white/40 dark:bg-[#1C1C1E]/40 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-all">
+              <span class="font-mono text-[10px] font-bold text-apple-blue dark:text-apple-darkBlue">KIRIM PESAN MASSAL</span>
+              <i class="ph ph-broadcast text-apple-lightGray text-sm"></i>
+            </div>
+            
+            <div class="flex items-center justify-between p-3.5 rounded-xl border border-[#E5E5EA] dark:border-[#2C2C2E] bg-white/40 dark:bg-[#1C1C1E]/40 hover:bg-[#E5E5EA]/20 dark:hover:bg-[#2C2C2E]/20 transition-all">
+              <span class="font-mono text-[10px] font-bold text-apple-blue dark:text-apple-darkBlue">DAFTAR EMAIL</span>
+              <i class="ph ph-envelope-simple text-apple-lightGray text-sm"></i>
+            </div>
+            
+            <div class="flex items-center justify-between p-3.5 rounded-xl border border-apple-red/20 dark:border-apple-darkRed/20 bg-apple-red/5 hover:bg-apple-red/10 transition-all">
+              <span class="font-mono text-[10px] font-bold text-apple-red dark:text-apple-darkRed">HAPUS PERANGKAT</span>
+              <i class="ph ph-trash-simple text-apple-red/80 text-sm"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="scroll-mt-24">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl font-bold tracking-tight mb-3">Model Distribusi & Penggunaan</h2>
+        <p class="text-xs text-apple-lightGray dark:text-apple-darkGray">Silakan sesuaikan dengan pola pemakaian yang Anda butuhkan.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <!-- Self-Hosted Option -->
+        <div class="system-material p-8 squircle-lg flex flex-col justify-between">
+          <div>
+            <div class="mb-6">
+              <h3 class="text-[10px] font-bold text-apple-lightGray dark:text-apple-darkGray uppercase tracking-widest mb-2">Self-Hosted Source Code</h3>
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold tracking-tight">Rp50.000</span>
+                <span class="text-[11px] text-apple-lightGray dark:text-apple-darkGray">/ selamanya</span>
+              </div>
+            </div>
+            
+            <ul class="space-y-4 mb-10">
+              <li class="flex items-start gap-3 text-xs text-slate-700 dark:text-neutral-300">
+                <i class="ph ph-check-bold text-apple-blue dark:text-apple-darkBlue mt-0.5 text-sm shrink-0"></i>
+                <span>Akses Source Code Utuh Tanpa Obfuskasi</span>
+              </li>
+              <li class="flex items-start gap-3 text-xs text-slate-700 dark:text-neutral-300">
+                <i class="ph ph-check-bold text-apple-blue dark:text-apple-darkBlue mt-0.5 text-sm shrink-0"></i>
+                <span>Menerima File Pembaruan secara Berkala</span>
+              </li>
+              <li class="flex items-start gap-3 text-xs text-slate-700 dark:text-neutral-300">
+                <i class="ph ph-check-bold text-apple-blue dark:text-apple-darkBlue mt-0.5 text-sm shrink-0"></i>
+                <span>Hak Cipta Pengelolaan Mandiri Sepenuhnya</span>
+              </li>
+            </ul>
+          </div>
+          
+          <a href="https://t.me/dikaacode" target="_blank" class="w-full text-center bg-[#1C1C1E] dark:bg-white text-white dark:text-[#1C1C1E] py-3 rounded-xl font-bold text-xs hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            Dapatkan Lisensi Script
+          </a>
+        </div>
+
+        <!-- Hosted VIP Option (Styled as Apple Recommended / Subscribed option) -->
+        <div class="system-material p-8 squircle-lg relative flex flex-col justify-between border-apple-blue dark:border-apple-darkBlue shadow-[0_8px_32px_rgba(0,122,255,0.06)]">
+          <div class="absolute top-0 right-0 bg-apple-blue dark:bg-apple-darkBlue text-white text-[9px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-wider flex items-center gap-1.5">
+            <i class="ph ph-credit-card text-xs"></i> Otomatisasi QRIS
+          </div>
+          
+          <div>
+            <div class="mb-6">
+              <h3 class="text-[10px] font-bold text-apple-blue dark:text-apple-darkBlue uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                <i class="ph ph-crown text-xs"></i> Hosted VIP Access
+              </h3>
+              <div class="flex items-baseline gap-1">
+                <span class="text-3xl font-extrabold tracking-tight">Rp1.000</span>
+                <span class="text-[11px] text-apple-lightGray dark:text-apple-darkGray">/ hari</span>
+              </div>
+            </div>
+            
+            <!-- Apple-like Pricing tier buttons (Inactive style selectors) -->
+            <div class="grid grid-cols-3 gap-2.5 mb-8">
+              <div class="border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-3 text-center bg-white/40 dark:bg-[#1C1C1E]/40">
+                <div class="text-[9px] text-apple-lightGray dark:text-apple-darkGray">3 Hari</div>
+                <div class="text-xs font-bold mt-1">Rp3k</div>
+              </div>
+              <div class="border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-3 text-center bg-white/40 dark:bg-[#1C1C1E]/40">
+                <div class="text-[9px] text-apple-lightGray dark:text-apple-darkGray">7 Hari</div>
+                <div class="text-xs font-bold mt-1">Rp7k</div>
+              </div>
+              <div class="border border-[#E5E5EA] dark:border-[#2C2C2E] rounded-lg p-3 text-center bg-white/40 dark:bg-[#1C1C1E]/40">
+                <div class="text-[9px] text-apple-lightGray dark:text-apple-darkGray">30 Hari</div>
+                <div class="text-xs font-bold mt-1">Rp30k</div>
+              </div>
+              <div class="border border-apple-green/20 rounded-lg p-3.5 text-center bg-apple-green/5 col-span-3">
+                <div class="text-[9px] text-apple-green dark:text-apple-darkGreen uppercase font-bold tracking-wider">Akses Selamanya</div>
+                <div class="text-xs font-bold mt-0.5">Rp50.000</div>
+              </div>
+            </div>
+          </div>
+
+          <a href="https://t.me/dikaacode" target="_blank" class="w-full text-center bg-apple-blue dark:bg-apple-darkBlue text-white py-3 rounded-xl font-bold text-xs hover:opacity-95 active:scale-95 transition-all shadow-sm shadow-apple-blue/10">
+            Daftar Anggota VIP
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#E5E5EA] dark:border-[#2C2C2E] bg-white/40 dark:bg-[#1C1C1E]/40 backdrop-blur-xl mt-12 py-12 px-6">
+    <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="flex items-center gap-2.5">
+        <i class="ph ph-robot text-apple-lightGray dark:text-apple-darkGray text-lg"></i>
+        <span class="text-xs text-apple-lightGray dark:text-apple-darkGray font-medium">WhatsApp Recovery Bot &copy; 2022-2026 DikaCode</span>
+      </div>
+      
+      <div class="flex flex-wrap justify-center gap-6 text-xs font-medium text-apple-lightGray dark:text-apple-darkGray">
+        <a href="https://t.me/execuidorbaru" target="_blank" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors flex items-center gap-1.5"><i class="ph ph-bell"></i> Saluran Berita</a>
+        <a href="https://t.me/dikaacode" target="_blank" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors flex items-center gap-1.5"><i class="ph ph-bug"></i> Laporkan Bug</a>
+        <a href="https://github.com/dikacode0-glitch/dikacode0-glitch.github.io/blob/main/HOWTOINSTALL.md" class="hover:text-[#1C1C1E] dark:hover:text-white transition-colors flex items-center gap-1.5"><i class="ph ph-book-open"></i> Panduan Instalasi</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
