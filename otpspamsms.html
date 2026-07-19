@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spammer OTP WhatsApp - 106+ API</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #111118;
+            --bg-card: #15151f;
+            --border: #1e1e2e;
+            --text: #c8c8d4;
+            --text-muted: #6c6c80;
+            --accent: #00ff88;
+            --accent-dim: #00cc6a;
+            --blue: #00aaff;
+            --blue-dim: #0088cc;
+            --red: #ff3355;
+            --yellow: #ffbb33;
+            --purple: #aa55ff;
+            --cyan: #00ddff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ─── ANIMATED GRID BACKGROUND ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                linear-gradient(rgba(0,255,136,.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,136,.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ─── SCROLLBAR ─── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+
+        /* ─── SCANLINE EFFECT ─── */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,255,136,.008) 2px,
+                rgba(0,255,136,.008) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+            background: rgba(10,10,15,.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        nav .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: .9rem;
+            color: var(--accent);
+            letter-spacing: .05em;
+        }
+        nav .logo span { color: var(--text-muted); font-weight: 400; }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: .85rem;
+            margin-left: 1.5rem;
+            transition: .2s;
+        }
+        nav a:hover { color: var(--accent); }
+
+        /* ─── CONTAINER ─── */
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 80px 1.5rem 4rem;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            text-align: center;
+            padding: 5rem 0 3rem;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: .3;
+        }
+
+        .hero .version-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .75rem;
+            padding: .35rem 1rem;
+            border-radius: 100px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: rgba(0,255,136,.06);
+            margin-bottom: 1.5rem;
+        }
+        .hero .version-badge .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%,100% { opacity: 1; }
+            50% { opacity: .3; }
+        }
+
+        .hero h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1.8rem, 5vw, 3.2rem);
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .hero .badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: .6rem;
+            margin-top: 1.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .3rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .72rem;
+            padding: .3rem .7rem;
+            border-radius: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .badge.green { color: var(--accent); border-color: rgba(0,255,136,.2); }
+        .badge.blue { color: var(--blue); border-color: rgba(0,170,255,.2); }
+        .badge.red { color: var(--red); border-color: rgba(255,51,85,.2); }
+        .badge.yellow { color: var(--yellow); border-color: rgba(255,187,51,.2); }
+        .badge.purple { color: var(--purple); border-color: rgba(170,85,255,.2); }
+
+        /* ─── SECTION ─── */
+        section { margin: 3.5rem 0; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .85rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            margin-bottom: 1.5rem;
+        }
+        .section-title::before {
+            content: '//';
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        p, li { font-size: .95rem; color: var(--text); }
+        a { color: var(--cyan); }
+
+        /* ─── FEATURES GRID ─── */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: .8rem;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem;
+            transition: .2s;
+        }
+        .feature-card:hover {
+            border-color: rgba(0,255,136,.2);
+            transform: translateY(-2px);
+        }
+
+        .feature-card .icon { font-size: 1.3rem; margin-bottom: .4rem; }
+        .feature-card h4 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: .3rem;
+        }
+        .feature-card p {
+            font-size: .82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ─── TABLE ─── */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .88rem;
+        }
+        th {
+            background: var(--bg-card);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--text-muted);
+            padding: .8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: .75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(0,255,136,.02); }
+
+        .tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .7rem;
+            padding: .15rem .5rem;
+            border-radius: 4px;
+            background: rgba(0,255,136,.08);
+            color: var(--accent);
+        }
+        .tag.red { background: rgba(255,51,85,.1); color: var(--red); }
+        .tag.blue { background: rgba(0,170,255,.1); color: var(--blue); }
+        .tag.yellow { background: rgba(255,187,51,.1); color: var(--yellow); }
+
+        /* ─── CODE ─── */
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82rem;
+            line-height: 1.8;
+            overflow-x: auto;
+            color: var(--text);
+        }
+        .code-block .cmt { color: var(--text-muted); }
+        .code-block .cmd { color: var(--accent); }
+        .code-block .str { color: var(--yellow); }
+        .code-block .var { color: var(--cyan); }
+
+        /* ─── FILE TREE ─── */
+        .file-tree {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .82rem;
+            line-height: 2;
+        }
+        .file-tree .dir { color: var(--cyan); }
+        .file-tree .file { color: var(--text); }
+        .file-tree .desc { color: var(--text-muted); }
+        .file-tree .sep { color: var(--border); user-select: none; }
+
+        /* ─── TERMINAL WINDOW ─── */
+        .terminal {
+            background: #0d0d17;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .terminal .bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: .7rem 1rem;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+        }
+        .terminal .bar .dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+        }
+        .terminal .bar .dot.r { background: #ff5f56; }
+        .terminal .bar .dot.y { background: #ffbd2e; }
+        .terminal .bar .dot.g { background: #27c93f; }
+        .terminal .bar .title { font-size: .75rem; color: var(--text-muted); margin-left: .5rem; }
+
+        .terminal .body {
+            padding: 1.2rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: .8rem;
+            line-height: 1.9;
+        }
+        .terminal .body .prompt { color: var(--accent); }
+        .terminal .body .out { color: var(--text-muted); }
+        .terminal .body .out.green { color: var(--accent); }
+        .terminal .body .out.red { color: var(--red); }
+
+        @keyframes blink {
+            0%,100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 1.1em;
+            background: var(--accent);
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 640px) {
+            nav { padding: 0 1rem; }
+            nav a { margin-left: 1rem; font-size: .78rem; }
+            .container { padding: 70px 1rem 3rem; }
+            .features-grid { grid-template-columns: 1fr; }
+            .table-wrap { margin: 0 -1rem; border-radius: 0; }
+            .code-block { font-size: .75rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="scanline"></div>
+
+<!-- NAV -->
+<nav>
+    <div class="logo">otp<span>spammer</span></div>
+    <div>
+        <a href="#install">Install</a>
+        <a href="#admin">Admin</a>
+        <a href="#files">Files</a>
+        <a href="#license">License</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="version-badge">
+            <span class="dot"></span>
+            v3.1 — 106+ API
+        </div>
+        <h1>Spammer OTP WhatsApp</h1>
+        <p>
+            Premium OTP spammer dengan <strong>106+ API endpoint</strong>,
+            sistem lisensi terenkripsi, Admin Panel, dan animasi terminal keren.
+        </p>
+        <div class="badges">
+            <span class="badge green">&#9679; 106+ API</span>
+            <span class="badge blue">&#9679; Python 3.10+</span>
+            <span class="badge green">&#9679; Linux / Android / Win</span>
+            <span class="badge red">&#9679; Premium</span>
+            <span class="badge yellow">&#9679; Supabase</span>
+            <span class="badge purple">&#9679; Multi-Thread</span>
+        </div>
+    </div>
+
+    <!-- TENTANG -->
+    <section>
+        <div class="section-title">Tentang</div>
+        <p>
+            <strong>Spammer OTP WhatsApp</strong> adalah tools premium untuk spam OTP WhatsApp melalui <strong>106+ API endpoint</strong>
+            dari berbagai layanan Indonesia. Dilengkapi dengan sistem manajemen lisensi via Supabase, Admin Panel,
+            maintenance mode, device fingerprinting, dan animasi terminal khas hacker.
+        </p>
+    </section>
+
+    <!-- FITUR -->
+    <section>
+        <div class="section-title">Fitur Unggulan</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">&#127919;</div>
+                <h4>106+ API</h4>
+                <p>Target OTP WhatsApp dari berbagai kategori: e-commerce, fintech, transportasi, logistik, dan lainnya.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128274;</div>
+                <h4>Sistem Lisensi</h4>
+                <p>Trial + Premium unlimited via Supabase dengan device fingerprinting anti-ban.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#9889;</div>
+                <h4>Multi-Threading</h4>
+                <p>Dukungan 1-10 thread untuk spam paralel. Koneksi simultan ke semua target.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128260;</div>
+                <h4>Infinite Loop</h4>
+                <p>Auto-repeat tiap 60 detik untuk spam berkelanjutan tanpa henti.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128202;</div>
+                <h4>Admin Panel</h4>
+                <p>Grant premium, list users, cari user, toggle maintenance mode.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128737;</div>
+                <h4>Maintenance Mode</h4>
+                <p>Toggle ON/OFF dari database. Owner tetap akses, user lain di-block.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#127912;</div>
+                <h4>Animasi Terminal</h4>
+                <p>Loading splash, typewriter, glow text, pulse, ZSH-style menu, progress bar.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128299;</div>
+                <h4>User-Agent Rotation</h4>
+                <p>34+ User-Agent acak (Chrome, Firefox, Safari, Edge, Samsung, Opera) untuk hindari deteksi.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">&#128241;</div>
+                <h4>Multi-Platform</h4>
+                <p>Berjalan di Linux, Android (Termux), dan Windows.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TERMINAL DEMO -->
+    <section>
+        <div class="section-title">Terminal Preview</div>
+        <div class="terminal">
+            <div class="bar">
+                <span class="dot r"></span>
+                <span class="dot y"></span>
+                <span class="dot g"></span>
+                <span class="title">spammer-otp — python main.py</span>
+            </div>
+            <div class="body">
+                <span class="prompt">❯</span> python main.py<br>
+                <span class="out green">[ OK ] Kernel modules loaded</span><br>
+                <span class="out green">[ OK ] 106 API targets connected</span><br>
+                <span class="out green">[ OK ] License verification passed</span><br>
+                <span class="out green">[ OK ] System ready. Welcome.</span><br>
+                &nbsp;<br>
+                <span class="prompt">  ></span>  Date: Minggu, 20 Juli 2026  on  DikaHardBoy<br>
+                <span class="out">        total users  1<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;premium      1<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;trial        0</span><br>
+                &nbsp;<br>
+                <span class="prompt">  ></span>  PREMIUM ACTIVE - Unlimited Access<br>
+                &nbsp;<br>
+                <span class="prompt">  []</span>  MENU PREMIUM<br>
+                <span class="out">    [1]  Single Round         1-10 thread, 106 API<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[2]  Infinite Loop        auto-repeat tiap 60s<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[3]  Beli Premium         30/90/365/unlimited<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[4]  Admin Panel          manage users + grant<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;[5]  Keluar               exit program</span><br>
+                &nbsp;<br>
+                <span class="prompt">❯</span> premium > <span class="cursor"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMIN PANEL -->
+    <section id="admin">
+        <div class="section-title">Admin Panel</div>
+        <p style="margin-bottom:1rem">
+            Untuk owner <span class="tag">e0c2cc66256510fe2215a3671982910a</span>
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Menu</th><th>Fungsi</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="tag">Grant Premium</span></td><td>Aktivasi device ID + jumlah hari <span class="tag blue">0 = Unlimited</span></td></tr>
+                    <tr><td><span class="tag">List Users</span></td><td>Lihat semua user terdaftar</td></tr>
+                    <tr><td><span class="tag">Cari User</span></td><td>Search by device ID</td></tr>
+                    <tr><td><span class="tag">Maintenance</span></td><td>Toggle ON/OFF + kustom pesan</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- MAINTENANCE -->
+    <section>
+        <div class="section-title">Maintenance Mode</div>
+        <p>Ketika mode maintenance <span class="tag red">AKTIF</span>:</p>
+        <ul style="margin-top:.6rem;padding-left:1.5rem;display:flex;flex-direction:column;gap:.4rem;">
+            <li>&#10003; Semua user TRIAL &amp; PREMIUM (non-owner) di-block</li>
+            <li>&#10003; Mereka melihat layar maintenance + pesan kustom</li>
+            <li>&#10003; <strong>OWNER</strong> tetap bisa akses tools penuh</li>
+            <li>&#10003; Data maintenance tersimpan di Supabase (config table)</li>
+        </ul>
+    </section>
+
+    <!-- INSTALL -->
+    <section id="install">
+        <div class="section-title">Cara Install</div>
+        <div class="terminal">
+            <div class="bar">
+                <span class="dot r"></span>
+                <span class="dot y"></span>
+                <span class="dot g"></span>
+                <span class="title">bash — install</span>
+            </div>
+            <div class="body">
+                <span class="cmt"># Clone repository</span><br>
+                <span class="prompt">$</span> git clone &lt;repo-url&gt;<br>
+                <span class="prompt">$</span> <span class="cmd">cd</span> spammer-otp<br>
+                <br>
+                <span class="cmt"># Install dependencies</span><br>
+                <span class="prompt">$</span> pip install -r requirements.txt<br>
+                <br>
+                <span class="cmt"># Setup database — jalankan setup_supabase.sql di Supabase SQL Editor</span><br>
+                <span class="cmt"># Ganti SUPABASE_KEY di license.py dengan anon key dari dashboard</span><br>
+                <br>
+                <span class="cmt"># Jalankan tools</span><br>
+                <span class="prompt">$</span> python main.py<span class="cursor"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FILE STRUCTURE -->
+    <section id="files">
+        <div class="section-title">File Structure</div>
+        <div class="file-tree">
+            <div><span class="dir">spammer-otp/</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">main.py</span>              <span class="desc"># Entry point + menu ZSH-style</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">main_engine.py</span>       <span class="desc"># OTP spam engine (106+ targets)</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">handlers.py</span>          <span class="desc"># Custom OTP handler functions</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">targets.py</span>           <span class="desc"># 106 target API configurations</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">license.py</span>           <span class="desc"># License system + Supabase</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">utils.py</span>             <span class="desc"># Utility functions</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">animations.py</span>        <span class="desc"># Terminal animations</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">useragents.py</span>        <span class="desc"># 34+ User-Agent list</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">setup_supabase.sql</span>  <span class="desc"># Database setup script</span></div>
+            <div> <span class="sep">&#9492;</span> <span class="file">index.html</span>           <span class="desc"># This page</span></div>
+        </div>
+    </section>
+
+    <!-- LICENSE -->
+    <section id="license">
+        <div class="section-title">License</div>
+        <div class="feature-card" style="border-color:rgba(0,255,136,.15);">
+            <h4 style="color:var(--accent);margin-bottom:.4rem;">&#128274; Premium License</h4>
+            <p>Hak akses penuh dengan sistem lisensi via Supabase.</p>
+            <p><strong>Harga:</strong> Rp. 5.000 <span style="color:var(--text-muted);font-size:.82rem;">(sekali bayar, akses selamanya)</span></p>
+            <p style="margin-top:.4rem;"><strong>Kontak:</strong> <span class="tag" style="background:rgba(0,170,255,.1);color:var(--blue);border-color:transparent;">Telegram @bapakmu123d</span></p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div style="text-align:center;padding:3rem 0 1rem;border-top:1px solid var(--border);margin-top:3rem;">
+        <p style="font-size:.8rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;">
+            Spammer OTP WhatsApp v3.1 &mdash; 106+ API &mdash; &copy; 2026
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>
